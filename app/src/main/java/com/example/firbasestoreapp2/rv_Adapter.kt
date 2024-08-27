@@ -1,6 +1,7 @@
 package com.example.firbasestoreapp2
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
@@ -27,6 +28,19 @@ class RvAdapter(var context: Context, var list: ArrayList<users>) :
         val user = list[position]
         holder.binding.name.text = user.name  ?: "No Name"
         holder.binding.pass.text = user.pass  ?: "No Password"
+
+
+        // for updating
+
+        holder.binding.update.setOnClickListener {
+            var intent = Intent(context, MainActivity2::class.java)
+            intent.putExtra("name",user.name  ?: "No Name" )
+            intent.putExtra("pass",user.pass  ?: "no pass" )
+            intent.putExtra("id",user.id  ?: "no id" )
+            context.startActivity(intent)
+        }
+
+        // for deleting
         holder.binding.delete.setOnClickListener {
             val db = Firebase.firestore
             db.collection("users").document(list.get(position).id!!).delete()
@@ -34,6 +48,7 @@ class RvAdapter(var context: Context, var list: ArrayList<users>) :
                 .addOnSuccessListener {
                     Toast.makeText(context, "Deleted ", Toast.LENGTH_SHORT).show()
                     notifyItemRemoved(position)
+                    list.removeAt(position)
                 } .addOnFailureListener {
                     Toast.makeText(context, "Failed to delete ", Toast.LENGTH_SHORT).show()
                 }
